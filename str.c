@@ -13,8 +13,8 @@ source++;
 *destination = '\0';
 }
 
-size_t strlen(const char * str){
-size_t s;
+int strlen(const char * str){
+int s;
 while(*str){
   s++;
 }
