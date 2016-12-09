@@ -20,11 +20,3 @@ bool Circle::is_inside(int x, int y) const{
 void Circle::zoom(int factor){
 	r_*=factor;
 }
-void Circle::move(int new_x, int new_y){
-	x=new_x;
-	y=new_y;
-	
-}
-int Circle::get_id() const{
-	return id;
-}

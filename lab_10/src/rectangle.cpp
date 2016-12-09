@@ -16,10 +16,3 @@ void Rectangle::zoom(int factor){
 	h_*=factor;
 	w_*=factor;
 }
-void Rectangle::move(int new_x, int new_y){
-	x=new_x;
-	y=new_y;
-}
-int Rectangle:: get_id() const{
-	return id;
-}
