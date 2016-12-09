@@ -12,5 +12,5 @@ class Circle : public Figure {
     void zoom(int factor);
   private:
     int r_;
-    const char* label_;
+    char* label_;
 };

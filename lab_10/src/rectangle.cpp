@@ -5,7 +5,12 @@ Rectangle::Rectangle(int id, int x, int y, int width, int height):Figure(id,x,y)
 	w_=width;
 	h_=height;
     }
-//Rectangle::~Rectangle();
+
+
+Rectangle::~Rectangle(){
+
+
+}
 void Rectangle::print() const{
 	printf("Rectangle %d: x = %d y = %d width = %d height = %d",id,x,y,w_,h_);
 }

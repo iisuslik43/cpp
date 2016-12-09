@@ -6,9 +6,11 @@ this->x=x;
 this->y=y;
 
 }
-/*
-virtual Figure::~Figure();
 
+Figure::~Figure(){
+
+}
+/*
 virtual void Figure::print() const = 0;
 virtual bool Figure::is_inside(int x, int y) const = 0;
 virtual void Figure::zoom(int factor) = 0;

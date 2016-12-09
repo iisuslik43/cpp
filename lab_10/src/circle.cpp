@@ -2,13 +2,15 @@
 #include "figure.h"
 #include "math.h"
 #include <stdio.h>
+#include <string.h>
 Circle::Circle(int id, int x, int y, int radius, const char* label):Figure(id,x,y){
 	r_=radius;
-	label_=label;
+	label_ = new char[strlen(label) + 1];
+        strcpy(label_, label);
 
 }
 Circle::~Circle(){
-	delete label_;
+	delete [] label_;
 }
     
 void Circle::print() const{
