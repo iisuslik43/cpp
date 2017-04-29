@@ -12,7 +12,7 @@ int main(int argc, char* argv[]){
             unarchive(o.in_file, o.out_file);
         }
     }
-    catch(OptionsException& e){
-        cout << e.message << endl;
+    catch(runtime_error& e){
+        cerr << e.what( ) << endl;
     }
 }
