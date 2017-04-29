@@ -1,14 +1,19 @@
 #include "../src/huffman.h"
+#include "../src/options.h"
 #include <gtest/gtest.h>
 using namespace std;
 
-TEST(TreeConstruction, IsCorrect){
+
+TEST(TreeTest, IsCorrect){
     vector<Node> counts(260);
-    counts['a'].count = 5;
+    counts['a'].count = 10;
+    counts['a'].code = 'a';
     counts['b'].count = 1;
+    counts['b'].code = 'b';
     counts['c'].count = 2;
+    counts['c'].code = 'c';
     Tree tree(counts);
-    Node* root = tree.get_root();
+    Node* root = tree.root;
     ASSERT_TRUE(root);
     ASSERT_TRUE(root->node_1 && root->node_0);
     ASSERT_TRUE(root->node_1->code == 'a' || root->node_0->code == 'a');
@@ -29,12 +34,19 @@ TEST(TreeConstruction, IsCorrect){
 
 }
 
-TEST(TreeGetCodes, IsCorrect){
+TEST(TreeTest, IsCorrectGetCodes){
     vector<Node> counts(260);
-    counts['a'].count = 5;
+    counts['a'].count = 10;
+    counts['a'].code = 'a';
+
     counts['b'].count = 1;
+    counts['b'].code = 'b';
+
     counts['c'].count = 2;
+
+    counts['c'].code = 'c';
     Tree tree(counts);
+    tree.count_codes();
     vector<string> codes = tree.get_codes();
     ASSERT_TRUE(codes.size() > 3);
     ASSERT_TRUE(codes['a'] == "1" || codes['a'] == "0");
@@ -64,9 +76,9 @@ TEST(OptionsTest, WithNOcOru){
         Options o1(5, argv);
         wasException = false;
     }
-    catch(OptionsException& e){
+    catch(runtime_error& e){
         EXPECT_EQ(wasException, true);
-        EXPECT_EQ(e.message, "no -c or -u");
+        ASSERT_TRUE(!strcmp(e.what(), "no -c or -u"));
     }
     delete [] argv;
 }
@@ -84,9 +96,9 @@ TEST(OptionsTest, WrongSequence){
         Options o1(6, argv);
         wasException = false;
     }
-    catch(OptionsException& e){
+    catch(runtime_error& e){
         EXPECT_EQ(wasException, true);
-        EXPECT_EQ(e.message, "wrong option");
+        ASSERT_TRUE(!strcmp(e.what(), "wrong option"));
     }
     delete [] argv;
 }
@@ -103,9 +115,9 @@ TEST(OptionsTest, WithNOFile2){
         Options o1(5, argv);
         wasException = false;
     }
-    catch(OptionsException& e){
+    catch(runtime_error& e){
         EXPECT_EQ(wasException, true);
-        EXPECT_EQ(e.message, "no in or out");
+        ASSERT_TRUE(!strcmp(e.what(), "no in or out"));
     }
     delete [] argv;
 }
@@ -121,9 +133,9 @@ TEST(OptionsTest, WithNOo){
         Options o1(4, argv);
         wasException = false;
     }
-    catch(OptionsException& e){
+    catch(runtime_error& e){
         EXPECT_EQ(wasException, true);
-        EXPECT_EQ(e.message, "no in or out");
+        ASSERT_TRUE(!strcmp(e.what(), "wrong option"));
     }
     delete [] argv;
 }
@@ -141,9 +153,9 @@ TEST(OptionsTest, WrongOPtion){
         Options o1(6, argv);
         wasException = false;
     }
-    catch(OptionsException& e){
+    catch(runtime_error& e){
         EXPECT_EQ(wasException, true);
-        EXPECT_EQ(e.message, "wrong option");
+        ASSERT_TRUE(!strcmp(e.what(), "wrong option"));
     }
     delete [] argv;
 }
@@ -161,17 +173,11 @@ TEST(OptionsTest, NotWrongOption2){
         Options o1(6, argv);
         wasException = false;
     }
-    catch(OptionsException& e){
-        EXPECT_EQ(e.message, "wrong option");
+    catch(runtime_error& e){
+        ASSERT_TRUE(!strcmp(e.what(), "wrong option"));
     }
     EXPECT_EQ(wasException, false);
     delete [] argv;
-}
-
-
-int main(int argc, char **argv) {
-    testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
 }
 
 TEST(ArchieveTest, Empty){
@@ -187,30 +193,5 @@ TEST(ArchieveTest, Easy){
     unarchive("a.kek", "b");
     ifstream in1("a", ios::binary);
     ifstream in2("b", ios::binary);
-    while(in1 && in2){
-        int8_t eq1;
-        int8_t eq2;
-        in1 >> eq1;
-        in2 >> eq2;
-        ASSERT_EQ(eq1, eq2);
-    }
-    if(in1 || in2)
-        ASSERT_TRUE(false);
-}
-
-TEST(ArchieveTest, Big){
-    archive("peppa.jpg", "peppa.jpg.kek");
-    unarchive("peppa.jpg.kek", "peppa2.jpg");
-    ifstream in1("a", ios::binary);
-    ifstream in2("b", ios::binary);
-    while(in1 && in2){
-        int8_t eq1;
-        int8_t eq2;
-        in1 >> eq1;
-        in2 >> eq2;
-        ASSERT_EQ(eq1, eq2);
-    }
-    if(in1 || in2)
-        ASSERT_TRUE(false);
-
+    ASSERT_FALSE(system("diff -s a b"));
 }

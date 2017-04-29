@@ -1,5 +1,5 @@
 #include "../src/huffman.h"
-
+#include "../src/options.h"
 using namespace std;
 
 void read_counts(vector<Node>& count, ifstream& in, size_t number_of_unique_codes){
@@ -13,37 +13,6 @@ void read_counts(vector<Node>& count, ifstream& in, size_t number_of_unique_code
     }
 }
 
-Options::Options(int argc, char** argv){
-    for(int i = 1; i < argc; i++){
-            if(!strcmp(argv[i], "-c")){
-                    is_archive = 1;
-            }
-            else if(!strcmp(argv[i], "-u")){
-                    is_archive = -1;
-            }
-            else if(!strcmp(argv[i], "-f") || !strcmp(argv[i], "--file")){
-                    i++;
-                    if(i >= argc)
-                        throw runtime_error("no in or out");
-                    in_file = argv[i];
-            }
-            else if(!strcmp(argv[i], "-o") || !strcmp(argv[i], "--output")){
-                    i++;
-                    if(i >= argc)
-                        throw runtime_error("no in or out");
-                    out_file = argv[i];
-            }
-            else{
-                    throw runtime_error("wrong option");
-            }
-    }
-    if(!is_archive){
-        throw runtime_error("no -c or -u");
-    }
-    if(in_file == "" || out_file == ""){
-        throw runtime_error("no in or out");
-    }
-}
 
 
 Tree::Tree(const vector<Node>& counts){
@@ -146,13 +115,16 @@ size_t Tree::decode_file(ifstream& in, ofstream& out, size_t no_huffman_size){
     return huffman_size;
 }
 
+vector<string> Tree::get_codes(){
+    return codes;
+}
 size_t Tree::code_file(ifstream& in, ofstream& out){
     uint8_t c;
     count_codes();
     size_t j = 0;
     char write = 0;
     size_t huffman_size = 0;;
-    while(in){
+    while(in.peek() != std::ifstream::traits_type::eof()){
         in.read((char*)&c, sizeof(char));
         string s = codes[c];
         for(size_t h = 0; h < s.size(); h++){
@@ -171,23 +143,6 @@ size_t Tree::code_file(ifstream& in, ofstream& out){
         huffman_size++;
     }
     return huffman_size;
-}
-
-bool isEmpty(ifstream& in){
-    size_t now = in.tellg();
-    in.seekg(ios::end);
-    size_t res = in.tellg();
-    in.seekg(now);
-    return !res;
-}
-
-bool isEmpty(string filename){
-    ifstream in(filename, ios::binary);
-    size_t now = in.tellg();
-    in.seekg(ios::end);
-    size_t res = in.tellg();
-    in.seekg(now);
-    return !res;
 }
 
 void archive(string in_file, string out_file){
@@ -233,6 +188,8 @@ void archive(string in_file, string out_file){
         cout << no_huffman_size  << endl;
         cout << huffman_size << endl;
         cout << sizeof(size_t) + number_of_unique_codes * (1 + sizeof(size_t)) << endl;
+        in.close();
+        out.close();
 }
 void unarchive(string in_file, string out_file){
     ifstream in(in_file, ios::binary);
@@ -260,4 +217,6 @@ void unarchive(string in_file, string out_file){
     cout << huffman_size << endl;
     cout << no_huffman_size  << endl;
     cout << sizeof(size_t) + number_of_unique_codes * (1 + sizeof(size_t)) << endl;
+    in.close();
+    out.close();
 }

@@ -1,4 +1,5 @@
-Ounclude "..# e io&fam{man.h"
+Oi_)2lnuroi.# e )e&f
+:0man.h"
 
 using namespace std;
 
@@ -236,6 +237,8 @@ void archive(string in_file, string out_file){
         cout << no_huffman_size  << endl;
         cout << huffman_size << endl;
         cout << sizeof(size_t) + number_of_unique_codes * (1 + sizeof(size_t)) << endl;
+        in.close();
+        out.close();
 }
 void unarchive(string in_file, string out_file){
     ifstream in(in_file, ios::binary);
@@ -263,3 +266,5 @@ void unarchive(string in_file, string out_file){
     cout << huffman_size << endl;
     cout << no_huffman_size  << endl;
     cout << sizeof(size_t) + number_of_unique_codes * (1 + sizeof(size_t)) << endl;
+    in.close();
+    out.close();
