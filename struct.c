@@ -4,7 +4,11 @@
 #include "struct.h"
 
 void save_gun(gun* g, FILE* file){
-    fwrite (&g, sizeof(file),1, file );
+    for(int i = 0; i < 20; i++)
+        fwrite (&(g->type[i]), sizeof(char),1, file );
+    fwrite (&(g->ammo), sizeof(int),1, file );
+    fwrite (&(g->caliber), sizeof(int),1, file );
+    fwrite (&(g->price), sizeof(int),1, file );
 }
 
 void save_list(gun* head){
@@ -18,32 +22,63 @@ void save_list(gun* head){
         save_gun(head, file);
         head = head->next;
     }
+    fclose(file);
 }
 
 void load_gun(gun* g, FILE* file){
-    fread (&g, sizeof(file),1, file );
+    for(int i = 0; i < 20; i++)
+        fread (&(g->type[i]), sizeof(char),1, file );
+    fread (&(g->ammo), sizeof(int),1, file );
+    fread (&(g->caliber), sizeof(int),1, file );
+    fread (&(g->price), sizeof(int),1, file );
+    g->prev = g->next = NULL;
 }
 
-void load_list(gun* head){
+int get_size(FILE* file){
+    fseek(file,0,SEEK_END);
+
+    int size =  ftell(file);
+    fseek(file,0,SEEK_SET);
+    return size;
+}
+
+gun* load_list(gun* head){
     FILE *file = fopen("for_guns","r");
     if(file == NULL){
         printf("Can`t find file for_guns");
         clear(head);
         exit(0);
     }
-    while (!feof(file)){
-        gun* g = malloc(sizeof(gun));
+    int count = get_size(file) / 32;
+    int first = 1;
+    clear(head);
+    head = NULL;
+    gun* g = NULL;
+    gun* prev = NULL;
+    for(int i = 0; i < count; i++){
+        prev = g;
+        g = malloc(sizeof(gun));
         load_gun(g, file);
+        if(first){
+            head = g;
+            first = 0;
+        }
+        if(prev){
+            prev->next = g;
+            g->prev = prev;
+        }
     }
-
+    fclose(file);
+    return head;
 }
 
-void clear(gun* head){
+gun* clear(gun* head){
     while(head){
         gun* temp = head;
         head = head->next;
         free(temp);
     }
+    return NULL;
 }
 gun* add(gun* head, gun* new){
     if(!head){
@@ -95,6 +130,7 @@ gun* sort(gun* head, int type_or_price){
     gun* now_head = head;
     int first_min = 1;
     while(now_head->next){
+
         gun* temp = now_head;
         gun* min = now_head;
         while(temp){
@@ -107,16 +143,13 @@ gun* sort(gun* head, int type_or_price){
             head = min;
             first_min = 0;
         }
-        printf("%d\n", min->price);
         if(min == now_head) {
             now_head = now_head->next;
             continue;
         }
 
         delete(min);
-        printf("fuck\n");
         insert(min, now_head);
-        printf("fuck\n");
     }
     return head;
 }

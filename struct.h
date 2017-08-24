@@ -8,8 +8,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-static const int BY_PRICE = 1;
-static const int BY_TYPE = -1;
+static const int BY_PRICE = 2;
+static const int BY_TYPE = 1;
 
 typedef struct gun gun;
 struct gun{
@@ -19,10 +19,11 @@ struct gun{
     gun* next;
 };
 
-void save_gun(gun* g, FILE* file);
 void save_list(gun* head);
+gun* load_list(gun* head);
 
-void clear(gun* head);
+
+gun* clear(gun* head);
 gun* add(gun* head, gun* new);
 int comp(gun* a, gun* b, int type_or_price);
 gun* sort(gun* head, int type_or_price);
